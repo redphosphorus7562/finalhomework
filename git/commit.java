@@ -6,10 +6,11 @@ public class commit extends init{
     private String key;
     private String value;
 
-    //constructor  path存储commit的value
+    //constructor  path路径中的文件存储commit的value
     public commit(String path) throws Exception {
         this.key=gethash(path);
-        this.key=getvalue(path);
+        this.value=getvalue(path);
+        super.head=this.key;
         save(this,this.key);
     }
 
