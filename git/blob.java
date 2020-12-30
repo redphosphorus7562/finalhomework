@@ -9,6 +9,7 @@ public class blob extends init{
         super();
         this.key = gethash(path);
         this.name = name;
+        //调用save函数存储对象
         save(this,this.key);
     }
 
