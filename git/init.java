@@ -4,6 +4,7 @@ import java.io.*;
 
 public class init extends getkey{
     private String storage;
+
     public static String head;
 
     public init(String path) {

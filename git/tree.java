@@ -13,6 +13,7 @@ public class tree extends init{
         this.key = gethash(path);
         this.name = name;
         this.value=getValue(path);
+        //调用save函数存储对象
         save(this,this.key);
     }
 
