@@ -1,20 +1,22 @@
 ## Java第十二小组课程项目设计文档
 
-- #### 实现的交互
+#### 实现的交互功能
 
-  - showbranch：调用branchmanager查看现有分支
-  
-  - checkout [branchname]：切换相应分支（将HEAD指针指向该分支）
-  
-  - newbranch [branchname]：新建分支（创建新分支后HEAD会自动指向他)
-  
-  - recover：展现当前HEAD指针所指向的分支的内容
-  
-  - reset：将当前分支所指的commit对象，改为上一个commit对象
-  
-  - commit [对应的文件根目录]: 提交指定文件/文件夹到当前所在分支
-  
-  - gitquit: 退出git
+- showbranch：调用branchmanager查看现有分支
+- checkout [branchname]：切换相应分支（将HEAD指针指向该分支）
+- newbranch [branchname]：新建分支（创建新分支后HEAD会自动指向他)
+- recover：展现当前HEAD指针所指向的分支的内容
+- reset：将当前分支所指的commit对象，改为上一个commit对象
+- commit [对应的文件根目录]: 提交指定文件/文件夹到当前所在分支
+- gitquit: 退出git
+
+#### 设计思路
+
+整个版本控制系统建立在五个基础的类型之上：blob，tree，commit，branch，branchmanager。为了提高代码复用减少冗余，将这五个类抽象出gitobject父类。
+
+branchmanager类用来存放HEAD指针和各分支id，branch类用来存储分支对应的commit的id，commit通过forecommithash 连成一串。
+
+
 
 - #### getkey类
 
@@ -48,9 +50,9 @@
        - 以序列化的方式，将对象存储到其objpath下，并命名为name
        
      - take(String name, String storage)
-      
+     
        - 用反序列化的方式，从指定文件中提取出对象
-       
+   
 - #### blob类(继承自getobject类）
 
    - ##### 数据域：String value, String name(文件名）
@@ -83,47 +85,15 @@
        - 定义一个hashmap的属性结构value<哈希值,类型( "Blob"/"Tree")>
        - 读取文件并遍历文件夹
        - 生成相应的Blob和Tree
- 
- - #### lib类
- 
-   - ##### 数据域：String objpath gitobject（存储的路径）
-   
-   - ##### 构造方法
-   
-     - recover(tree t, String currbranch)
-     
-       - 根据根目录对应的tree对象，从object文件中提取信息
-       - 生成到currbranch目录下
-     
-     - writefile(blob b,File file)
-     
-       - 获取文件并写入blob对象
-     
-     - delete(String path)
-     
-       - 递归删除路径下的所有文件
 
-- #### repository类
-   
-  - ##### 数据域：String Storage
-   
-  - ##### 构造方法
-   
-    - init()
-     
-      - 初始化仓库
-      - 创建object文件夹 存放分支列表
-      - 创建log文件夹 存放版本的历史
-      - 创建currbranch文件夹 存放当前分支的文件
-      
 - #### commit类(继承自getobject类）
 
   - ##### 数据域：Map<String,String> value
-   
+  
   - ##### 构造方法     
     
     - commit(String path,String forecommithash,String remarks,String s)
-   
+  
       - 定义一个hashmap的属性结构value
       - 存放roothash所对应的Tree对象的哈希值
       - forecommithash上一个commit的哈希值
@@ -150,19 +120,50 @@
       - branchname为该分支的名字（不允许同名）
       - storage为目标路径objpath
       - currcommit为当前所对应的commit
-      
+    
 - #### branchmanage类(继承自getobject类）
 
   - ##### 数据域：String HEAD，ArrayList<String> branches
-   
+  
   - ##### 构造方法
-   
+  
     - branchmanager(String HEAD, ArrayList<String> branches,String s)
       
       - HEAD为记录HEAD指向的分支名称
       - branches为各个分支的链表
       - storage为目标路径object
- 
+
+- #### lib类
+   - ##### 数据域：String objpath gitobject（存储的路径）
+   
+   - ##### 构造方法
+   
+     - recover(tree t, String currbranch)
+     
+       - 根据根目录对应的tree对象，从object文件中提取信息
+       - 生成到currbranch目录下
+     
+     - writefile(blob b,File file)
+     
+       - 获取文件并写入blob对象
+     
+     - delete(String path)
+     
+       - 递归删除路径下的所有文件
+
+- #### repository类
+  
+  - ##### 数据域：String Storage
+  
+  - ##### 构造方法
+  
+    - init()
+    
+      - 初始化仓库
+      - 创建object文件夹 存放分支列表
+      - 创建log文件夹 存放版本的历史
+      - 创建currbranch文件夹 存放当前分支的文件
+
 - #### command类
 
   - showbranch：调用branchmanager查看现有分支
