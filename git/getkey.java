@@ -8,7 +8,32 @@ import java.security.MessageDigest;
 public class getkey {
 
 
-    //获取文件哈希值
+    /**
+     * 将sha1字节数组转换为哈希值
+     * @param sha1  sha1字节数组
+     * @return
+     */
+    public String getsha1(byte[] sha1){
+        String result="";
+
+        for (byte b : sha1) {
+            String append = Integer.toString(b & 0xFF,16);
+            if(append.length()<2){
+                result = result +"0"+append;
+            }
+            else {
+                result +=append;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 计算文件哈希值
+     * @param file  求哈希值的文件
+     * @return      返回文件的哈希值
+     * @throws Exception
+     */
     private String gethashofFile(File file) throws Exception{
         MessageDigest complete = MessageDigest.getInstance("SHA-1");
         byte[] buffer= new  byte[1024];
@@ -21,16 +46,20 @@ public class getkey {
             }
         }
         fis.close();
+
         byte[] sha1=complete.digest();
-        String result="";
-        for (byte b : sha1) {
-            result+=Integer.toString(b & 0xFF,16);
-        }
-        return result;
+        return getsha1(sha1);
     }
 
-    //获取文件夹哈希值
+    /**
+     * 计算文件夹的哈希值
+     * @param file
+     * @return
+     * @throws Exception
+     */
     private String gethashofDir(File file) throws Exception{
+
+
         MessageDigest complete =MessageDigest.getInstance("SHA-1");
         File[] fs = file.listFiles();
 
@@ -48,40 +77,30 @@ public class getkey {
 
         }
         byte[] sha1=complete.digest();
-        String result="";
-        for (byte b : sha1) {
-            result+=Integer.toString(b & 0xFF,16);
-        }
-        return result;
+
+        return getsha1(sha1);
     }
 
-    //整合文件和文件夹
+
+    /**
+     * 计算文件或文件夹的哈希值（整合）
+     * @param file  对应文件或文件夹
+     * @return      返回哈希值
+     * @throws Exception
+     */
+    public String gethash(File file) throws Exception{
+        if(file.isFile()){
+            return gethashofFile(file);
+        }
+        return gethashofDir(file);
+    }
+
+    //重写上面的函数
     public String gethash(String f) throws Exception{
         File file=new File(f);
-        String result;
-        if(file.isFile()){
-            result=gethashofFile(file);
-        }
-        else {
-            result=gethashofDir(file);
-
-        }
-
-        return result;
+        return gethash(file);
     }
 
-    public String gethash(File file) throws Exception{
 
-        String result;
-        if(file.isFile()){
-            result=gethashofFile(file);
-        }
-        else {
-            result=gethashofDir(file);
-
-        }
-
-        return result;
-    }
 
 }
